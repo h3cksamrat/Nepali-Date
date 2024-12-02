@@ -10,6 +10,7 @@ const convertToADMethod = Symbol('convertToAD()')
 const setAdBs = Symbol('setADBS()')
 const setDayYearMonth = Symbol('setDayYearMonth()')
 
+export { NepaliDateHelper, Language }
 export default class NepaliDate {
   private [jsDateSymbol]: Date
   private [yearSymbol]: number

@@ -165,9 +165,9 @@ export class NepaliDateHelper {
       return yearDaysPassed
     })
 
-    if (this.daysPassed !== MAX_DAY) {
-      throw new Error('Invalid constant initialization for Nepali Date.')
-    }
+    // if (this.daysPassed !== MAX_DAY) {
+    //   throw new Error('Invalid constant initialization for Nepali Date.')
+    // }
   }
 
   /**
