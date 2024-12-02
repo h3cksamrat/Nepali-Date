@@ -1,12 +1,4 @@
-import {
-  convertToAD,
-  convertToBS,
-  IYearMonthDate,
-  IAdBs,
-  format,
-  Language,
-  parse
-} from './nepali-date-helper'
+import { IYearMonthDate, IAdBs, Language, NepaliDateHelper } from './nepali-date-helper'
 
 const dateSymbol = Symbol('Date')
 const daySymbol = Symbol('Day')
@@ -17,12 +9,14 @@ const convertToBSMethod = Symbol('convertToBS()')
 const convertToADMethod = Symbol('convertToAD()')
 const setAdBs = Symbol('setADBS()')
 const setDayYearMonth = Symbol('setDayYearMonth()')
+
 export default class NepaliDate {
   private [jsDateSymbol]: Date
   private [yearSymbol]: number
   private [dateSymbol]: number
   private [daySymbol]: number
   private [monthSymbol]: number
+  static helper: NepaliDateHelper = new NepaliDateHelper()
   /**
    * Default language for formatting. Set the value to 'np' for default nepali formatting.
    */
@@ -97,6 +91,7 @@ export default class NepaliDate {
   constructor(year: number, monthIndex: number, date: number)
   constructor() {
     const constructorError = new Error('Invalid constructor arguments')
+
     if (arguments.length === 0) {
       this[convertToBSMethod](new Date())
     } else if (arguments.length === 1) {
@@ -106,7 +101,7 @@ export default class NepaliDate {
           this[convertToBSMethod](new Date(argument))
           break
         case 'string':
-          const { date, year, month } = parse(argument)
+          const { date, year, month } = NepaliDate.helper.parse(argument)
           this[setDayYearMonth](year, month, date)
           this[convertToADMethod]()
           break
@@ -209,7 +204,7 @@ export default class NepaliDate {
   getDateObject(): IAdBs {
     return {
       BS: this.getBS(),
-      AD: this.getAD()
+      AD: this.getAD(),
     }
   }
   /**
@@ -229,7 +224,7 @@ export default class NepaliDate {
       year: this[yearSymbol],
       month: this[monthSymbol],
       date: this[dateSymbol],
-      day: this[daySymbol]
+      day: this[daySymbol],
     }
   }
   /**
@@ -249,7 +244,7 @@ export default class NepaliDate {
       year: this[jsDateSymbol].getFullYear(),
       month: this[jsDateSymbol].getMonth(),
       date: this[jsDateSymbol].getDate(),
-      day: this[jsDateSymbol].getDay()
+      day: this[jsDateSymbol].getDay(),
     }
   }
 
@@ -359,7 +354,7 @@ export default class NepaliDate {
    * @param language en | np
    */
   format(formatString: string, language: 'en' | 'np' = NepaliDate.language): string {
-    return format(this.getBS(), formatString, language)
+    return NepaliDate.helper.format(this.getBS(), formatString, language)
   }
 
   /**
@@ -367,8 +362,8 @@ export default class NepaliDate {
    * Similar to calling constructor with string parameter
    * @param dateString
    */
-  static parse(dateString: string): NepaliDate {
-    const { date, year, month } = parse(dateString)
+  parse(dateString: string): NepaliDate {
+    const { date, year, month } = NepaliDate.helper.parse(dateString)
     return new NepaliDate(year, month, date)
   }
 
@@ -390,7 +385,7 @@ export default class NepaliDate {
   }
 
   private [convertToBSMethod](date: Date) {
-    const { AD, BS } = convertToBS(date)
+    const { AD, BS } = NepaliDate.helper.convertToBS(date)
     this[setAdBs](AD, BS)
   }
 
@@ -400,10 +395,10 @@ export default class NepaliDate {
   }
 
   private [convertToADMethod]() {
-    const { AD, BS } = convertToAD({
+    const { AD, BS } = NepaliDate.helper.convertToAD({
       year: this[yearSymbol],
       month: this[monthSymbol],
-      date: this[dateSymbol]
+      date: this[dateSymbol],
     })
     this[setAdBs](AD, BS)
   }
